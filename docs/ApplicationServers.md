@@ -19,6 +19,21 @@ This minimal runtime is a good template for "drop a single binary, run it" use
 cases. The Supabase Edge Functions runtime described below builds on the same
 workflow but requires extra tooling.
 
+## Node.js runtime
+
+* **Dockerfile:** [`dockerfiles/node-runtime/Dockerfile`](../dockerfiles/node-runtime/Dockerfile)
+* **Runtime goal:** ship a ready-to-edit Node.js project that listens on port
+  8080 and boots straight into the sample `server.js` HTTP service.
+* **Node version:** Node.js 18.19.1 (latest 32-bit LTS release – newer major
+  versions no longer provide official `linux/386` builds).
+* **EXT2 build:** select `dockerfiles/node-runtime/Dockerfile` when triggering
+  the `Deploy` GitHub Action. A 256 MiB disk image leaves enough room for
+  `npm install` plus small projects without wasting space.
+* **Usage:** the runtime starts `/usr/local/bin/start-node.sh`, which drops you
+  into `/home/user/app`. Replace `server.js` or initialize a full project as
+  needed; the helper script only re-creates the sample server when the file is
+  missing.
+
 ## Supabase Edge Functions runtime (experimental)
 
 Supabase Edge Functions are executed by Deno; therefore a complete runtime needs
