@@ -34,6 +34,26 @@ workflow but requires extra tooling.
   needed; the helper script only re-creates the sample server when the file is
   missing.
 
+## Next.js runtime
+
+* **Dockerfile:** [`dockerfiles/next-runtime/Dockerfile`](../dockerfiles/next-runtime/Dockerfile)
+* **Runtime goal:** launch `npm run dev` for a starter Next.js app that listens
+  on port 8080 and lives in `/home/user/next-app`.
+* **Included stack:** Node.js 18.19.1, Next.js 14.2.3, React 18.2.0, and the
+  wasm fallback for SWC (we skip the optional native binaries to keep things
+  light enough for 32-bit WebVM images).
+* **EXT2 build:** select `dockerfiles/next-runtime/Dockerfile` in the `Deploy`
+  workflow. Pruning optional packages (notably `sharp` and the unused SWC
+  targets) drops the bundled dependencies to ~150 MiB, so a **384 MiB** disk is
+  now sufficient for the OS, Next.js cache directories (like `.next/`), and some
+  extra npm packages. You can run the dev server in 256 MiB if you aggressively
+  clean build artifacts, but 384 MiB leaves comfortable headroom for typical
+  edits and production builds.
+* **Usage:** the runtime opens straight into the development server. Edit files
+  under `/home/user/next-app`, run `npm run build` for production output, and
+  switch to `npm start` if you want to serve the compiled app instead of the dev
+  server.
+
 ## Supabase Edge Functions runtime (experimental)
 
 Supabase Edge Functions are executed by Deno; therefore a complete runtime needs
